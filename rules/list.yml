@@ -1,0 +1,134 @@
+port: 7890
+socks-port: 7891
+allow-lan: false
+mode: Rule
+log-level: info
+external-controller: 127.0.0.1:9090
+experimental:
+  ignore-resolve-fail: true
+dns:
+  enable: true
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 114.114.114.114
+    - 101.6.6.6
+  fallback:
+    - tcp://1.1.1.1
+    - tls://1.0.0.1
+    - tls://dns.google
+Proxy:
+  - name: v2ray
+    type: vmess
+    server: abc.xyz
+    port: 443
+    uuid: fe999e16-cd27-475d-46f9-0c21715af1d8
+    alterId: "233"
+    cipher: auto
+    tls: true
+    network: ws
+    ws-path: /233
+Proxy Group:
+  - name: Proxy
+    type: select
+    proxies:
+      - AUTO
+      - v2ray
+  - name: AUTO
+    type: url-test
+    proxies:
+      - v2ray
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+Rule:
+  - DOMAIN-SUFFIX,aaplimg.com,Proxy
+  - DOMAIN-SUFFIX,apple.co,Proxy
+  - DOMAIN-SUFFIX,apple.com,Proxy
+  - DOMAIN-SUFFIX,cdn-apple.com,Proxy
+  - DOMAIN-SUFFIX,icloud-content.com,Proxy
+  - DOMAIN-SUFFIX,icloud.com,Proxy
+  - DOMAIN-SUFFIX,itunes.com,Proxy
+  - DOMAIN-SUFFIX,me.com,Proxy
+  - DOMAIN-SUFFIX,mzstatic.com,Proxy
+  - DOMAIN-KEYWORD,admarvel,REJECT
+  - DOMAIN-KEYWORD,admaster,REJECT
+  - DOMAIN-KEYWORD,adsage,REJECT
+  - DOMAIN-KEYWORD,adsmogo,REJECT
+  - DOMAIN-KEYWORD,adsrvmedia,REJECT
+  - DOMAIN-KEYWORD,adwords,REJECT
+  - DOMAIN-KEYWORD,adservice,REJECT
+  - DOMAIN-KEYWORD,crashlytics,REJECT
+  - DOMAIN-KEYWORD,domob,REJECT
+  - DOMAIN-KEYWORD,duomeng,REJECT
+  - DOMAIN-KEYWORD,dwtrack,REJECT
+  - DOMAIN-KEYWORD,guanggao,REJECT
+  - DOMAIN-KEYWORD,lianmeng,REJECT
+  - DOMAIN-KEYWORD,dnserror,REJECT
+  - DOMAIN-KEYWORD,omgmta,REJECT
+  - DOMAIN-KEYWORD,openx,REJECT
+  - DOMAIN-KEYWORD,partnerad,REJECT
+  - DOMAIN-KEYWORD,pingfore,REJECT
+  - DOMAIN-KEYWORD,supersonicads,REJECT
+  - DOMAIN-KEYWORD,tracking,REJECT
+  - DOMAIN-KEYWORD,uedas,REJECT
+  - DOMAIN-KEYWORD,umeng,REJECT
+  - DOMAIN-KEYWORD,usage,REJECT
+  - DOMAIN-KEYWORD,wlmonitor,REJECT
+  - DOMAIN-KEYWORD,zjtoolbar,REJECT
+  - DOMAIN-KEYWORD,alipay,DIRECT
+  - DOMAIN-KEYWORD,taobao,DIRECT
+  - DOMAIN-KEYWORD,alicdn,DIRECT
+  - DOMAIN-KEYWORD,aliyun,DIRECT
+  - DOMAIN-SUFFIX,jd.com,DIRECT
+  - DOMAIN-SUFFIX,mi.com,DIRECT
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,tmall.com,DIRECT
+  - DOMAIN-SUFFIX,youku.com,DIRECT
+  - DOMAIN-SUFFIX,servicewechat.com,DIRECT
+  - DOMAIN-KEYWORD,blogspot,Proxy
+  - DOMAIN-KEYWORD,dropbox,Proxy
+  - DOMAIN-KEYWORD,facebook,Proxy
+  - DOMAIN-KEYWORD,gmail,Proxy
+  - DOMAIN-KEYWORD,google,Proxy
+  - DOMAIN-KEYWORD,instagram,Proxy
+  - DOMAIN-KEYWORD,oculus,Proxy
+  - DOMAIN-KEYWORD,twitter,Proxy
+  - DOMAIN-KEYWORD,whatsapp,Proxy
+  - DOMAIN-KEYWORD,youtube,Proxy
+  - DOMAIN-KEYWORD,github,Proxy
+  - DOMAIN-SUFFIX,fb.com,Proxy
+  - DOMAIN-SUFFIX,fb.me,Proxy
+  - DOMAIN-SUFFIX,fbcdn.net,Proxy
+  - DOMAIN-SUFFIX,gstatic.com,Proxy
+  - DOMAIN-SUFFIX,scdn.co,Proxy
+  - DOMAIN-SUFFIX,t.co,Proxy
+  - DOMAIN-SUFFIX,telegra.ph,Proxy
+  - DOMAIN-SUFFIX,twimg.co,Proxy
+  - DOMAIN-SUFFIX,twimg.com,Proxy
+  - DOMAIN-SUFFIX,twitpic.com,Proxy
+  - DOMAIN-SUFFIX,youtu.be,Proxy
+  - DOMAIN-SUFFIX,ytimg.com,Proxy
+  - DOMAIN-SUFFIX,hockeyapp.net,Proxy
+  - DOMAIN-SUFFIX,bit.ly,Proxy
+  - DOMAIN-SUFFIX,amazonaws.com,Proxy
+  - DOMAIN-SUFFIX,awsstatic.com,Proxy
+  - IP-CIDR,67.198.55.0/24,Proxy
+  - IP-CIDR,91.108.4.0/22,Proxy
+  - IP-CIDR,91.108.8.0/22,Proxy
+  - IP-CIDR,91.108.12.0/22,Proxy
+  - IP-CIDR,91.108.16.0/22,Proxy
+  - IP-CIDR,91.108.56.0/22,Proxy
+  - IP-CIDR,109.239.140.0/24,Proxy
+  - IP-CIDR,149.154.160.0/20,Proxy
+  - IP-CIDR,149.154.164.0/22,Proxy
+  - IP-CIDR,149.154.168.0/22,Proxy
+  - IP-CIDR,149.154.172.0/22,Proxy
+  - IP-CIDR,205.172.60.0/22,Proxy
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - DOMAIN-SUFFIX,local,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,Proxy

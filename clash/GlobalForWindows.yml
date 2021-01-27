@@ -1,0 +1,908 @@
+
+# Port of HTTP(S) proxy server on the local end
+port: 7890
+
+# Port of SOCKS5 proxy server on the local end
+socks-port: 7891
+
+# Transparent proxy server port for Linux and macOS
+# redir-port: 7892
+
+# HTTP(S) and SOCKS5 server on the same port
+# mixed-port: 7890
+
+# authentication of local SOCKS5/HTTP(S) server
+# authentication:
+#  - "user1:pass1"
+#  - "user2:pass2"
+
+# Set to true to allow connections to local-end server from
+# other LAN IP addresses
+allow-lan: false
+
+# This is only applicable when `allow-lan` is `true`
+# '*': bind all IP addresses
+# 192.168.122.11: bind a single IPv4 address
+# "[aaaa::a8aa:ff:fe09:57d8]": bind a single IPv6 address
+bind-address: '*'
+
+# Clash router working mode
+# rule: rule-based packet routing
+# global: all packets will be forwarded to a single endpoint
+# direct: directly forward the packets to the Internet
+mode: Rule
+# Clash by default prints logs to STDOUT
+# info / warning / error / debug / silent
+log-level: info
+
+# When set to false, resolver won't translate hostnames to IPv6 addresses
+ipv6: true
+
+# RESTful web API listening address
+external-controller: 127.0.0.1:9090
+
+# A relative path to the configuration directory or an absolute path to a
+# directory in which you put some static web resource. Clash core will then
+# serve it at `${API}/ui`.
+# external-ui: folder
+
+# Secret for the RESTful API (optional)
+# Authenticate by spedifying HTTP header `Authorization: Bearer ${secret}`
+# ALWAYS set a secret if RESTful API is listening on 0.0.0.0
+# secret: ""
+
+# Outbound interface name
+interface-name: en0
+
+# Static hosts for DNS server and connection establishment, only works
+# when `dns.enhanced-mode` is `redir-host`.
+#
+# Wildcard hostnames are supported (e.g. *.clash.dev, *.foo.*.example.com)
+# Non-wildcard domain names has a higher priority than wildcard domain names
+# e.g. foo.example.com > *.example.com > .example.com
+# P.S. +.foo.com equals to .foo.com and foo.com
+hosts:
+  'mtalk.google.com': 108.177.125.188
+  # '*.clash.dev': 127.0.0.1
+  # '.dev': 127.0.0.1
+  # 'alpha.clash.dev': '::1'
+
+# DNS server settings
+# This section is optional. When not present, DNS server will be disabled.
+dns:
+  enable: false
+  listen: 0.0.0.0:53
+  # ipv6: false # when false, response to AAAA questions will be empty
+
+  # These nameservers are used to resolve the DNS nameserver hostnames below.
+  # Specify IP addresses only
+  default-nameserver:
+    - 114.114.114.114
+    - 8.8.8.8
+  enhanced-mode: redir-host # or fake-ip
+  fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
+  
+  # Hostnames in this list will not be resolved with fake IPs
+  # i.e. questions to these domain names will always be answered with their
+  # real IP addresses
+  # fake-ip-filter:
+  #   - '*.lan'
+  #   - localhost.ptlogin2.qq.com
+  
+  # Supports UDP, TCP, DoT, DoH. You can specify the port to connect to.
+  # All DNS questions are sent directly to the nameserver, without proxies
+  # involved. Clash answers the DNS question with the first result gathered.
+  nameserver:
+    - 114.114.114.114 # default value
+    - 8.8.8.8 # default value
+    - tls://dns.rubyfish.cn:853 # DNS over TLS
+    - https://1.1.1.1/dns-query # DNS over HTTPS
+
+  # When `fallback` is present, the DNS server will send concurrent requests
+  # to the servers in this section along with servers in `nameservers`.
+  # The answers from fallback servers are used when the GEOIP country
+  # is not `CN`.
+  # fallback:
+  #   - tcp://1.1.1.1
+
+  # If IP addresses resolved with servers in `nameservers` are in the specified
+  # subnets below, they are considered invalid and results from `fallback`
+  # servers are used instead.
+  #
+  # IP address resolved with servers in `nameserver` is used when
+  # `fallback-filter.geoip` is true and when GEOIP of the IP address is `CN`.
+  #
+  # If `fallback-filter.geoip` is false, results from `fallback` nameservers
+  # are always used, and answers from `nameservers` are discarded.
+  #
+  # This is a countermeasure against DNS pollution attacks.
+  fallback-filter:
+    geoip: true
+    ipcidr:
+      # - 240.0.0.0/4
+      
+proxies:
+# 支持的协议及加密算法示例请查阅 Clash 项目 README 以使用最新格式：https://github.com/Dreamacro/clash/blob/master/README.md
+#  - { name: "USA", type: http, server: usa.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "hkcm-ghelper", type: http, server: hkcm.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "hkbn1-ghelper", type: http, server: hkbn1.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "hkbn2-ghelper", type: http, server: hkbn2.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "tw-ghelper", type: http, server: tw.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "jp-ghelper", type: http, server: jp.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "jp1-ghelper", type: http, server: jp1.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "jp4-ghelper", type: http, server: jp4.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "kr-ghelper", type: http, server: kr.ghelper.net, port: 8080, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "he-ghelper", type: http, server: he.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "ru2-ghelper", type: http, server: ru2.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "de-ghelper", type: http, server: de.ghelper.net, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "usa-astar", type: http, server: usa.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "jp-astar", type: http, server: jp.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "jp1-astar", type: http, server: jp1.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "ca-astar", type: http, server: ca.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "sg1-astar", type: http, server: sg1.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "de-astar", type: http, server: de.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "In1-astar", type: http, server: in1.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "fr-astar", type: http, server: fr.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "pl-astar", type: http, server: pl.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "nl-astar", type: http, server: nl.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "uk-astar", type: http, server: uk.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+  - { name: "au1-astar", type: http, server: au1.cn-cloudflare.com, port: 443, username: "", password: "", tls: true, skip-cert-verify: true }
+
+# 服务器节点订阅
+proxy-providers:
+  # name: # Provider 名称
+  #   type: http # http 或 file
+  #   path: # 文件路径
+  #   url: # 只有当类型为 HTTP 时才可用，您不需要在本地空间中创建新文件。
+  #   interval: # 自动更新间隔，仅在类型为 HTTP 时可用
+  #   health-check: # 健康检查选项从此处开始
+  #     enable:
+  #     url: 
+  #     interval: 
+
+  #
+  # 「url」参数填写订阅链接
+  #
+  # 订阅链接可以使用 API 进行转换，如：https://sub.dler.io/
+  #
+  # 1.模式选择「进阶模式」 2.填写订阅链接 3.勾选「输出为 Node List」 4.「生成订阅链接」
+  #
+
+#  DuckDuckGo-Sub: # 冲鸭机场订阅链接
+#    type: http
+#    url: "https://duckduckgo.security/user/sub.php?token=DivineEngine"
+#    interval: 3600
+#    path: ./Proxy/ProxyList.yaml # 不同机场不同命名
+#    health-check:
+#      enable: true
+#      interval: 600
+#      url: http://www.gstatic.com/generate_204
+
+proxy-groups:
+# 策略组示例请查阅 Clash 项目 README 以使用最新格式：https://github.com/Dreamacro/clash/blob/master/README.md
+
+#
+# 策略组说明
+#
+# 「MATCH」类似 Surge 的「Final」，此处用于选择白名单模式(PROXY 策略)和黑名单模式(DIRECT 策略)
+#
+# 「Streaming」和「StreamingSE」比较好理解，有专用于流媒体的节点就设置到其中，如果没有「StreamingSE」的需求可以连带 Rule 部分一起删掉，「Streaming」需至少保留 Rule，用「PROXY」即可。
+#
+# 「PROXY」是代理规则策略，它可以指定为某个节点或嵌套一个其他策略组，如：「自动测试」、「Fallback」或「负载均衡」的策略组，关于这 3 个策略组的具体示例可以看官方示例：https://github.com/Dreamacro/clash
+#
+
+  # Fallback 比较实用的策略组类型，用于测试服务器节点的可用性，当第一个节点不可用时切换到第二个，以此类推。
+ 
+
+  # 代理节点选择
+  - name: "🚀️ 节点选择"
+    type: select
+    proxies:
+      - ♻️ 自动选择
+    #  - USA
+      - hkcm-ghelper
+      - hkbn1-ghelper
+      - hkbn2-ghelper
+      - tw-ghelper
+      - jp-ghelper
+      - jp1-ghelper
+      - jp4-ghelper
+      - kr-ghelper
+      - he-ghelper
+      - ru2-ghelper
+      - de-ghelper
+      - usa-astar
+      - jp-astar
+      - jp1-astar
+      - ca-astar
+      - sg1-astar
+      - de-astar
+      - In1-astar
+      - fr-astar
+      - pl-astar
+      - nl-astar
+      - uk-astar
+      - au1-astar
+  - name: "♻️ 自动选择"
+    type: url-test
+    proxies:
+    #  - USA 
+      - hkcm-ghelper
+      - hkbn1-ghelper
+      - hkbn2-ghelper
+      - tw-ghelper
+      - jp-ghelper
+      - jp-astar
+      - jp1-ghelper
+      - jp4-ghelper
+      - kr-ghelper
+      - he-ghelper
+      - ru2-ghelper
+      - de-ghelper
+      - usa-astar
+      - jp1-astar
+      - ca-astar
+      - sg1-astar
+      - de-astar
+      - In1-astar
+      - fr-astar
+      - pl-astar
+      - nl-astar
+      - uk-astar
+      - au1-astar
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+
+# # 白名单模式 PROXY, 黑名单模式 DIRECT, 不知道别动
+# - name: "MATCH"
+#   type: select
+#   proxies:
+#     - 🚀️ 节点选择
+#     - DIRECT
+  - name: 🎯 全球直连
+    type: select
+    proxies:
+      - DIRECT
+  # 国际流媒体服务
+  - name: "🌍 国外媒体"
+    type: select
+    proxies:
+      - 🚀️ 节点选择
+      - 🎯 全球直连
+  # 中国流媒体服务（面向海外版本）
+  - name: "🌏 国内媒体"
+    type: select
+    proxies:
+      - 🎯 全球直连
+
+# 关于 Rule Provider 请查阅：https://lancellc.gitbook.io/clash/clash-config-file/rule-provider
+
+rule-providers:
+# name: # Provider 名称
+#   type: http # http 或 file
+#   behavior: classical # 或 ipcidr、domain
+#   path: # 文件路径
+#   url: # 只有当类型为 HTTP 时才可用，您不需要在本地空间中创建新文件。
+#   interval: # 自动更新间隔，仅在类型为 HTTP 时可用
+
+  Unbreak:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Unbreak.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Unbreak.yaml
+    interval: 86400
+
+  🌍 国外媒体:
+    type: http
+    behavior: classical
+    path: ./RuleSet/StreamingMedia/Streaming.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/StreamingMedia/Streaming.yaml
+    interval: 86400
+
+  🌏 国内媒体:
+    type: http
+    behavior: classical
+    path: ./RuleSet/StreamingMedia/StreamingSE.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/StreamingMedia/StreamingSE.yaml
+    interval: 86400
+
+  Global:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Global.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Global.yaml
+    interval: 86400
+
+  China:
+    type: http
+    behavior: classical
+    path: ./RuleSet/China.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/China.yaml
+    interval: 86400
+
+  ChinaIP:
+    type: http
+    behavior: ipcidr
+    path: ./RuleSet/Extra/ChinaIP.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Extra/ChinaIP.yaml
+    interval: 86400
+
+# 规则
+rules:
+  # Unbreak
+  - RULE-SET,Unbreak,DIRECT
+
+  # Global Area Network
+
+  # (Streaming Media)
+  - RULE-SET,🌍 国外媒体,🌍 国外媒体
+
+  # (StreamingSE)
+  - RULE-SET,🌏 国内媒体,🌏 国内媒体
+
+  # (DNS Cache Pollution) / (IP Blackhole) / (Region-Restricted Access Denied) / (Network Jitter)
+  - RULE-SET,Global,🚀️ 节点选择
+
+  # China Area Network
+  - RULE-SET,China,DIRECT
+
+  # Local Area Network
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,224.0.0.0/4,DIRECT
+
+  # （可选）使用来自 ipipdotnet 的 ChinaIP 以解决数据不准确的问题，使用 ChinaIP.yaml 时可禁用下列直至（包括）「GEOIP,CN」规则
+  # - RULE-SET,ChinaIP,DIRECT
+  # Tencent
+  - IP-CIDR,119.28.28.28/32,DIRECT
+  - IP-CIDR,182.254.116.0/24,DIRECT
+  # GeoIP China
+  - GEOIP,CN,DIRECT
+
+#  - MATCH,MATCH
+Payload:
+  # (DNS Cache Pollution)
+  # > Apple
+  - DOMAIN,testflight.apple.com,PROXY
+  # > Google
+  - DOMAIN-SUFFIX,appspot.com
+  - DOMAIN-SUFFIX,blogger.com
+  - DOMAIN-SUFFIX,getoutline.org
+  - DOMAIN-SUFFIX,gvt0.com
+  - DOMAIN-SUFFIX,gvt1.com
+  - DOMAIN-SUFFIX,gvt3.com
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com
+  - DOMAIN-KEYWORD,google
+  - DOMAIN-KEYWORD,blogspot
+  # > Microsoft
+  - DOMAIN-SUFFIX,onedrive.live.com
+  - DOMAIN,az416426.vo.msecnd.net
+  - DOMAIN,az668014.vo.msecnd.net
+  # > Facebook
+  - DOMAIN-SUFFIX,cdninstagram.com
+  - DOMAIN-SUFFIX,facebook.com
+  - DOMAIN-SUFFIX,facebook.net
+  - DOMAIN-SUFFIX,fb.com
+  - DOMAIN-SUFFIX,fb.me
+  - DOMAIN-SUFFIX,fbaddins.com
+  - DOMAIN-SUFFIX,fbcdn.net
+  - DOMAIN-SUFFIX,fbsbx.com
+  - DOMAIN-SUFFIX,fbworkmail.com
+  - DOMAIN-SUFFIX,instagram.com
+  - DOMAIN-SUFFIX,m.me
+  - DOMAIN-SUFFIX,messenger.com
+  - DOMAIN-SUFFIX,oculus.com
+  - DOMAIN-SUFFIX,oculuscdn.com
+  - DOMAIN-SUFFIX,rocksdb.org
+  - DOMAIN-SUFFIX,whatsapp.com
+  - DOMAIN-SUFFIX,whatsapp.net
+  # > Twitter
+  - DOMAIN-SUFFIX,pscp.tv
+  - DOMAIN-SUFFIX,periscope.tv
+  - DOMAIN-SUFFIX,t.co
+  - DOMAIN-SUFFIX,twimg.co
+  - DOMAIN-SUFFIX,twimg.com
+  - DOMAIN-SUFFIX,twitpic.com
+  - DOMAIN-SUFFIX,twitter.com
+  - DOMAIN-SUFFIX,vine.co
+  # > Telegram
+  - DOMAIN-SUFFIX,telegra.ph
+  - DOMAIN-SUFFIX,telegram.org
+  - IP-CIDR,91.108.4.0/22,no-resolve
+  - IP-CIDR,91.108.8.0/22,no-resolve
+  - IP-CIDR,91.108.12.0/22,no-resolve
+  - IP-CIDR,91.108.16.0/22,no-resolve
+  - IP-CIDR,91.108.56.0/22,no-resolve
+  - IP-CIDR,149.154.160.0/20,no-resolve
+  - IP-CIDR,2001:b28:f23d::/48,no-resolve
+  - IP-CIDR,2001:b28:f23f::/48,no-resolve
+  - IP-CIDR,2001:67c:4e8::/48,no-resolve
+  # > Line
+  - DOMAIN-SUFFIX,line.me
+  - DOMAIN-SUFFIX,line-apps.com
+  - DOMAIN-SUFFIX,line-scdn.net
+  - DOMAIN-SUFFIX,naver.jp
+  - IP-CIDR,103.2.30.0/23,no-resolve
+  - IP-CIDR,125.209.208.0/20,no-resolve
+  - IP-CIDR,147.92.128.0/17,no-resolve
+  - IP-CIDR,203.104.144.0/21,no-resolve
+  # > Akamai
+  - DOMAIN,a248.e.akamai.net
+  - DOMAIN,a771.dscq.akamai.net
+  # > Amazon CloudFront
+  - DOMAIN,d3c33hcgiwev3.cloudfront.net
+  # > Others
+  - DOMAIN-SUFFIX,4shared.com
+  - DOMAIN-SUFFIX,9cache.com
+  - DOMAIN-SUFFIX,9gag.com
+  - DOMAIN-SUFFIX,abc.com
+  - DOMAIN-SUFFIX,abc.net.au
+  - DOMAIN-SUFFIX,abebooks.com
+  - DOMAIN-SUFFIX,amazon.co.jp
+  - DOMAIN-SUFFIX,ao3.org
+  - DOMAIN-SUFFIX,apigee.com
+  - DOMAIN-SUFFIX,apkcombo.com
+  - DOMAIN-SUFFIX,apk-dl.com
+  - DOMAIN-SUFFIX,apkfind.com
+  - DOMAIN-SUFFIX,apkmirror.com
+  - DOMAIN-SUFFIX,apkmonk.com
+  - DOMAIN-SUFFIX,apkpure.com
+  - DOMAIN-SUFFIX,aptoide.com
+  - DOMAIN-SUFFIX,archive.is
+  - DOMAIN-SUFFIX,archive.org
+  - DOMAIN-SUFFIX,archiveofourown.com
+  - DOMAIN-SUFFIX,archiveofourown.org
+  - DOMAIN-SUFFIX,arte.tv
+  - DOMAIN-SUFFIX,artstation.com
+  - DOMAIN-SUFFIX,arukas.io
+  - DOMAIN-SUFFIX,ask.com
+  - DOMAIN-SUFFIX,avg.com
+  - DOMAIN-SUFFIX,avgle.com
+  - DOMAIN-SUFFIX,badoo.com
+  - DOMAIN-SUFFIX,bandwagonhost.com
+  - DOMAIN-SUFFIX,bangkokpost.com
+  - DOMAIN-SUFFIX,bbc.com
+  - DOMAIN-SUFFIX,behance.net
+  - DOMAIN-SUFFIX,bibox.com
+  - DOMAIN-SUFFIX,biggo.com.tw
+  - DOMAIN-SUFFIX,binance.com
+  - DOMAIN-SUFFIX,bit.ly
+  - DOMAIN-SUFFIX,bitcointalk.org
+  - DOMAIN-SUFFIX,bitfinex.com
+  - DOMAIN-SUFFIX,bitmex.com
+  - DOMAIN-SUFFIX,bit-z.com
+  - DOMAIN-SUFFIX,bloglovin.com
+  - DOMAIN-SUFFIX,bloomberg.cn
+  - DOMAIN-SUFFIX,bloomberg.com
+  - DOMAIN-SUFFIX,blubrry.com
+  - DOMAIN-SUFFIX,book.com.tw
+  - DOMAIN-SUFFIX,booklive.jp
+  - DOMAIN-SUFFIX,books.com.tw
+  - DOMAIN-SUFFIX,boslife.net
+  - DOMAIN-SUFFIX,box.com
+  - DOMAIN-SUFFIX,brave.com
+  - DOMAIN-SUFFIX,businessinsider.com
+  - DOMAIN-SUFFIX,buzzfeed.com
+  - DOMAIN-SUFFIX,bwh1.net
+  - DOMAIN-SUFFIX,castbox.fm
+  - DOMAIN-SUFFIX,cbc.ca
+  - DOMAIN-SUFFIX,cdw.com
+  - DOMAIN-SUFFIX,change.org
+  - DOMAIN-SUFFIX,channelnewsasia.com
+  - DOMAIN-SUFFIX,ck101.com
+  - DOMAIN-SUFFIX,clarionproject.org
+  - DOMAIN-SUFFIX,cloudcone.com
+  - DOMAIN-SUFFIX,clyp.it
+  - DOMAIN-SUFFIX,cna.com.tw
+  - DOMAIN-SUFFIX,comparitech.com
+  - DOMAIN-SUFFIX,conoha.jp
+  - DOMAIN-SUFFIX,crucial.com
+  - DOMAIN-SUFFIX,cts.com.tw
+  - DOMAIN-SUFFIX,cw.com.tw
+  - DOMAIN-SUFFIX,cyberctm.com
+  - DOMAIN-SUFFIX,dailymotion.com
+  - DOMAIN-SUFFIX,dailyview.tw
+  - DOMAIN-SUFFIX,daum.net
+  - DOMAIN-SUFFIX,daumcdn.net
+  - DOMAIN-SUFFIX,dcard.tw
+  - DOMAIN-SUFFIX,deadline.com
+  - DOMAIN-SUFFIX,deepdiscount.com
+  - DOMAIN-SUFFIX,depositphotos.com
+  - DOMAIN-SUFFIX,deviantart.com
+  - DOMAIN-SUFFIX,disconnect.me
+  - DOMAIN-SUFFIX,discordapp.com
+  - DOMAIN-SUFFIX,discordapp.net
+  - DOMAIN-SUFFIX,disqus.com
+  - DOMAIN-SUFFIX,dlercloud.com
+  - DOMAIN-SUFFIX,dmhy.org
+  - DOMAIN-SUFFIX,dns2go.com
+  - DOMAIN-SUFFIX,dowjones.com
+  - DOMAIN-SUFFIX,dropbox.com
+  - DOMAIN-SUFFIX,dropboxapi.com
+  - DOMAIN-SUFFIX,dropboxusercontent.com
+  - DOMAIN-SUFFIX,duckduckgo.com
+  - DOMAIN-SUFFIX,duyaoss.com
+  - DOMAIN-SUFFIX,dw.com
+  - DOMAIN-SUFFIX,dynu.com
+  - DOMAIN-SUFFIX,earthcam.com
+  - DOMAIN-SUFFIX,ebookservice.tw
+  - DOMAIN-SUFFIX,economist.com
+  - DOMAIN-SUFFIX,edgecastcdn.net
+  - DOMAIN-SUFFIX,edu
+  - DOMAIN-SUFFIX,edx-cdn.org
+  - DOMAIN-SUFFIX,elpais.com
+  - DOMAIN-SUFFIX,enanyang.my
+  - DOMAIN-SUFFIX,encyclopedia.com
+  - DOMAIN-SUFFIX,esoir.be
+  - DOMAIN-SUFFIX,etherscan.io
+  - DOMAIN-SUFFIX,euronews.com
+  - DOMAIN-SUFFIX,evozi.com
+  - DOMAIN-SUFFIX,exblog.jp
+  - DOMAIN-SUFFIX,feeder.co
+  - DOMAIN-SUFFIX,feedly.com
+  - DOMAIN-SUFFIX,feedx.net
+  - DOMAIN-SUFFIX,firech.at
+  - DOMAIN-SUFFIX,flickr.com
+  - DOMAIN-SUFFIX,flipboard.com
+  - DOMAIN-SUFFIX,flitto.com
+  - DOMAIN-SUFFIX,foreignpolicy.com
+  - DOMAIN-SUFFIX,fortawesome.com
+  - DOMAIN-SUFFIX,freetls.fastly.net
+  - DOMAIN-SUFFIX,friday.tw
+  - DOMAIN-SUFFIX,ft.com
+  - DOMAIN-SUFFIX,ftchinese.com
+  - DOMAIN-SUFFIX,ftimg.net
+  - DOMAIN-SUFFIX,gate.io
+  - DOMAIN-SUFFIX,getlantern.org
+  - DOMAIN-SUFFIX,getsync.com
+  - DOMAIN-SUFFIX,github.com
+  - DOMAIN-SUFFIX,github.io
+  - DOMAIN-SUFFIX,githubusercontent.com
+  - DOMAIN-SUFFIX,globalvoices.org
+  - DOMAIN-SUFFIX,goo.ne.jp
+  - DOMAIN-SUFFIX,goodreads.com
+  - DOMAIN-SUFFIX,gov
+  - DOMAIN-SUFFIX,gov.tw
+  - DOMAIN-SUFFIX,greatfire.org
+  - DOMAIN-SUFFIX,gumroad.com
+  - DOMAIN-SUFFIX,hbg.com
+  - DOMAIN-SUFFIX,heroku.com
+  - DOMAIN-SUFFIX,hightail.com
+  - DOMAIN-SUFFIX,hk01.com
+  - DOMAIN-SUFFIX,hkbf.org
+  - DOMAIN-SUFFIX,hkbookcity.com
+  - DOMAIN-SUFFIX,hkej.com
+  - DOMAIN-SUFFIX,hket.com
+  - DOMAIN-SUFFIX,hootsuite.com
+  - DOMAIN-SUFFIX,hudson.org
+  - DOMAIN-SUFFIX,huffpost.com
+  - DOMAIN-SUFFIX,hyread.com.tw
+  - DOMAIN-SUFFIX,ibtimes.com
+  - DOMAIN-SUFFIX,i-cable.com
+  - DOMAIN-SUFFIX,icij.org
+  - DOMAIN-SUFFIX,icoco.com
+  - DOMAIN-SUFFIX,imgur.com
+  - DOMAIN-SUFFIX,independent.co.uk
+  - DOMAIN-SUFFIX,initiummall.com
+  - DOMAIN-SUFFIX,inoreader.com
+  - DOMAIN-SUFFIX,insecam.org
+  - DOMAIN-SUFFIX,ipfs.io
+  - DOMAIN-SUFFIX,issuu.com
+  - DOMAIN-SUFFIX,istockphoto.com
+  - DOMAIN-SUFFIX,japantimes.co.jp
+  - DOMAIN-SUFFIX,jiji.com
+  - DOMAIN-SUFFIX,jinx.com
+  - DOMAIN-SUFFIX,jkforum.net
+  - DOMAIN-SUFFIX,joinmastodon.org
+  - DOMAIN-SUFFIX,justmysocks.net
+  - DOMAIN-SUFFIX,justpaste.it
+  - DOMAIN-SUFFIX,kadokawa.co.jp
+  - DOMAIN-SUFFIX,kakao.com
+  - DOMAIN-SUFFIX,kakaocorp.com
+  - DOMAIN-SUFFIX,kik.com
+  - DOMAIN-SUFFIX,kingkong.com.tw
+  - DOMAIN-SUFFIX,knowyourmeme.com
+  - DOMAIN-SUFFIX,kobo.com
+  - DOMAIN-SUFFIX,kobobooks.com
+  - DOMAIN-SUFFIX,kodingen.com
+  - DOMAIN-SUFFIX,lemonde.fr
+  - DOMAIN-SUFFIX,lepoint.fr
+  - DOMAIN-SUFFIX,lihkg.com
+  - DOMAIN-SUFFIX,limbopro.xyz
+  - DOMAIN-SUFFIX,listennotes.com
+  - DOMAIN-SUFFIX,livestream.com
+  - DOMAIN-SUFFIX,logimg.jp
+  - DOMAIN-SUFFIX,logmein.com
+  - DOMAIN-SUFFIX,mail.ru
+  - DOMAIN-SUFFIX,mailchimp.com
+  - DOMAIN-SUFFIX,marc.info
+  - DOMAIN-SUFFIX,matters.news
+  - DOMAIN-SUFFIX,maying.co
+  - DOMAIN-SUFFIX,medium.com
+  - DOMAIN-SUFFIX,mega.nz
+  - DOMAIN-SUFFIX,mergersandinquisitions.com
+  - DOMAIN-SUFFIX,mil
+  - DOMAIN-SUFFIX,mingpao.com
+  - DOMAIN-SUFFIX,mixi.jp
+  - DOMAIN-SUFFIX,mobile01.com
+  - DOMAIN-SUFFIX,mubi.com
+  - DOMAIN-SUFFIX,myspace.com
+  - DOMAIN-SUFFIX,myspacecdn.com
+  - DOMAIN-SUFFIX,nanyang.com
+  - DOMAIN-SUFFIX,nationalinterest.org
+  - DOMAIN-SUFFIX,naver.com
+  - DOMAIN-SUFFIX,nbcnews.com
+  - DOMAIN-SUFFIX,ndr.de
+  - DOMAIN-SUFFIX,neowin.net
+  - DOMAIN-SUFFIX,newstapa.org
+  - DOMAIN-SUFFIX,nexitally.com
+  - DOMAIN-SUFFIX,nhk.or.jp
+  - DOMAIN-SUFFIX,nii.ac.jp
+  - DOMAIN-SUFFIX,nikkei.com
+  - DOMAIN-SUFFIX,nitter.net
+  - DOMAIN-SUFFIX,nofile.io
+  - DOMAIN-SUFFIX,notion.so
+  - DOMAIN-SUFFIX,now.com
+  - DOMAIN-SUFFIX,nrk.no
+  - DOMAIN-SUFFIX,nuget.org
+  - DOMAIN-SUFFIX,nyaa.si
+  - DOMAIN-SUFFIX,nyaa.si
+  - DOMAIN-SUFFIX,nyt.com
+  - DOMAIN-SUFFIX,nytchina.com
+  - DOMAIN-SUFFIX,nytcn.me
+  - DOMAIN-SUFFIX,nytco.com
+  - DOMAIN-SUFFIX,nytimes.com
+  - DOMAIN-SUFFIX,nytimg.com
+  - DOMAIN-SUFFIX,nytlog.com
+  - DOMAIN-SUFFIX,nytstyle.com
+  - DOMAIN-SUFFIX,ok.ru
+  - DOMAIN-SUFFIX,okex.com
+  - DOMAIN-SUFFIX,on.cc
+  - DOMAIN-SUFFIX,orientaldaily.com.my
+  - DOMAIN-SUFFIX,overcast.fm
+  - DOMAIN-SUFFIX,paltalk.com
+  - DOMAIN-SUFFIX,parsevideo.com
+  - DOMAIN-SUFFIX,pawoo.net
+  - DOMAIN-SUFFIX,pbxes.com
+  - DOMAIN-SUFFIX,pcdvd.com.tw
+  - DOMAIN-SUFFIX,pchome.com.tw
+  - DOMAIN-SUFFIX,pcloud.com
+  - DOMAIN-SUFFIX,picacomic.com
+  - DOMAIN-SUFFIX,pinimg.com
+  - DOMAIN-SUFFIX,pixiv.net
+  - DOMAIN-SUFFIX,player.fm
+  - DOMAIN-SUFFIX,plurk.com
+  - DOMAIN-SUFFIX,po18.tw
+  - DOMAIN-SUFFIX,potato.im
+  - DOMAIN-SUFFIX,potatso.com
+  - DOMAIN-SUFFIX,prism-break.org
+  - DOMAIN-SUFFIX,proxifier.com
+  - DOMAIN-SUFFIX,pt.im
+  - DOMAIN-SUFFIX,pts.org.tw
+  - DOMAIN-SUFFIX,pubu.com.tw
+  - DOMAIN-SUFFIX,pubu.tw
+  - DOMAIN-SUFFIX,pureapk.com
+  - DOMAIN-SUFFIX,quora.com
+  - DOMAIN-SUFFIX,quoracdn.net
+  - DOMAIN-SUFFIX,qz.com
+  - DOMAIN-SUFFIX,radio.garden
+  - DOMAIN-SUFFIX,rakuten.co.jp
+  - DOMAIN-SUFFIX,rarbgprx.org
+  - DOMAIN-SUFFIX,readingtimes.com.tw
+  - DOMAIN-SUFFIX,readmoo.com
+  - DOMAIN-SUFFIX,redbubble.com
+  - DOMAIN-SUFFIX,redd.it
+  - DOMAIN-SUFFIX,reddit.com
+  - DOMAIN-SUFFIX,redditmedia.com
+  - DOMAIN-SUFFIX,resilio.com
+  - DOMAIN-SUFFIX,reuters.com
+  - DOMAIN-SUFFIX,reutersmedia.net
+  - DOMAIN-SUFFIX,rfi.fr
+  - DOMAIN-SUFFIX,rixcloud.com
+  - DOMAIN-SUFFIX,roadshow.hk
+  - DOMAIN-SUFFIX,rsshub.app
+  - DOMAIN-SUFFIX,scmp.com
+  - DOMAIN-SUFFIX,scribd.com
+  - DOMAIN-SUFFIX,seatguru.com
+  - DOMAIN-SUFFIX,shadowsocks.org
+  - DOMAIN-SUFFIX,shindanmaker.com
+  - DOMAIN-SUFFIX,shopee.tw
+  - DOMAIN-SUFFIX,sina.com.hk
+  - DOMAIN-SUFFIX,slideshare.net
+  - DOMAIN-SUFFIX,softfamous.com
+  - DOMAIN-SUFFIX,spiegel.de
+  - DOMAIN-SUFFIX,ssrcloud.org
+  - DOMAIN-SUFFIX,startpage.com
+  - DOMAIN-SUFFIX,steamcommunity.com
+  - DOMAIN-SUFFIX,steemit.com
+  - DOMAIN-SUFFIX,steemitwallet.com
+  - DOMAIN-SUFFIX,straitstimes.com
+  - DOMAIN-SUFFIX,streema.com
+  - DOMAIN-SUFFIX,t66y.com
+  - DOMAIN-SUFFIX,tapatalk.com
+  - DOMAIN-SUFFIX,teco-hk.org
+  - DOMAIN-SUFFIX,teco-mo.org
+  - DOMAIN-SUFFIX,teddysun.com
+  - DOMAIN-SUFFIX,textnow.me
+  - DOMAIN-SUFFIX,theguardian.com
+  - DOMAIN-SUFFIX,theinitium.com
+  - DOMAIN-SUFFIX,themoviedb.org
+  - DOMAIN-SUFFIX,thetvdb.com
+  - DOMAIN-SUFFIX,time.com
+  - DOMAIN-SUFFIX,tineye.com
+  - DOMAIN-SUFFIX,tiny.cc
+  - DOMAIN-SUFFIX,tinyurl.com
+  - DOMAIN-SUFFIX,torproject.org
+  - DOMAIN-SUFFIX,tumblr.com
+  - DOMAIN-SUFFIX,turbobit.net
+  - DOMAIN-SUFFIX,tutanota.com
+  - DOMAIN-SUFFIX,tvboxnow.com
+  - DOMAIN-SUFFIX,udn.com
+  - DOMAIN-SUFFIX,unseen.is
+  - DOMAIN-SUFFIX,upmedia.mg
+  - DOMAIN-SUFFIX,uptodown.com
+  - DOMAIN-SUFFIX,urbandictionary.com
+  - DOMAIN-SUFFIX,ustream.tv
+  - DOMAIN-SUFFIX,uwants.com
+  - DOMAIN-SUFFIX,v2ray.com
+  - DOMAIN-SUFFIX,viber.com
+  - DOMAIN-SUFFIX,videopress.com
+  - DOMAIN-SUFFIX,vimeo.com
+  - DOMAIN-SUFFIX,voachinese.com
+  - DOMAIN-SUFFIX,voanews.com
+  - DOMAIN-SUFFIX,voxer.com
+  - DOMAIN-SUFFIX,vzw.com
+  - DOMAIN-SUFFIX,w3schools.com
+  - DOMAIN-SUFFIX,washingtonpost.com
+  - DOMAIN-SUFFIX,wattpad.com
+  - DOMAIN-SUFFIX,whoer.net
+  - DOMAIN-SUFFIX,wikileaks.org
+  - DOMAIN-SUFFIX,wikimapia.org
+  - DOMAIN-SUFFIX,wikimedia.org
+  - DOMAIN-SUFFIX,wikinews.org
+  - DOMAIN-SUFFIX,wikipedia.org
+  - DOMAIN-SUFFIX,wikiquote.org
+  - DOMAIN-SUFFIX,wikiwand.com
+  - DOMAIN-SUFFIX,winudf.com
+  - DOMAIN-SUFFIX,wire.com
+  - DOMAIN-SUFFIX,wn.com
+  - DOMAIN-SUFFIX,wordpress.com
+  - DOMAIN-SUFFIX,workflow.is
+  - DOMAIN-SUFFIX,worldcat.org
+  - DOMAIN-SUFFIX,wsj.com
+  - DOMAIN-SUFFIX,wsj.net
+  - DOMAIN-SUFFIX,xhamster.com
+  - DOMAIN-SUFFIX,xn--90wwvt03e.com
+  - DOMAIN-SUFFIX,xn--i2ru8q2qg.com
+  - DOMAIN-SUFFIX,xnxx.com
+  - DOMAIN-SUFFIX,xvideos.com
+  - DOMAIN-SUFFIX,yahoo.com
+  - DOMAIN-SUFFIX,yandex.ru
+  - DOMAIN-SUFFIX,ycombinator.com
+  - DOMAIN-SUFFIX,yesasia.com
+  - DOMAIN-SUFFIX,yes-news.com
+  - DOMAIN-SUFFIX,yomiuri.co.jp
+  - DOMAIN-SUFFIX,you-get.org
+  - DOMAIN-SUFFIX,zaobao.com
+  - DOMAIN-SUFFIX,zb.com
+  - DOMAIN-SUFFIX,zello.com
+  - DOMAIN-SUFFIX,zeronet.io
+  - DOMAIN-SUFFIX,zoom.us
+
+  - DOMAIN,cc.tvbs.com.tw
+  - DOMAIN,ocsp.int-x3.letsencrypt.org
+  - DOMAIN,payments-jp.amazon.com
+  - DOMAIN,s3-ap-northeast-1.amazonaws.com
+  - DOMAIN,s3-ap-southeast-2.amazonaws.com
+  - DOMAIN,search.avira.com
+  - DOMAIN,us.weibo.com
+
+  - DOMAIN-KEYWORD,jav
+  - DOMAIN-KEYWORD,pinterest
+  - DOMAIN-KEYWORD,porn
+
+  # (IP Blackhole)
+  # > Google
+  - DOMAIN-SUFFIX,abc.xyz
+  - DOMAIN-SUFFIX,advertisercommunity.com
+  - DOMAIN-SUFFIX,ampproject.org
+  - DOMAIN-SUFFIX,android.com
+  - DOMAIN-SUFFIX,androidify.com
+  - DOMAIN-SUFFIX,dialogflow.com
+  - DOMAIN-SUFFIX,autodraw.com
+  - DOMAIN-SUFFIX,capitalg.com
+  - DOMAIN-SUFFIX,certificate-transparency.org
+  - DOMAIN-SUFFIX,chrome.com
+  - DOMAIN-SUFFIX,chromeexperiments.com
+  - DOMAIN-SUFFIX,chromestatus.com
+  - DOMAIN-SUFFIX,chromium.org
+  - DOMAIN-SUFFIX,creativelab5.com
+  - DOMAIN-SUFFIX,debug.com
+  - DOMAIN-SUFFIX,deepmind.com
+  - DOMAIN-SUFFIX,firebaseio.com
+  - DOMAIN-SUFFIX,getmdl.io
+  - DOMAIN-SUFFIX,ggpht.com
+  - DOMAIN-SUFFIX,gmail.com
+  - DOMAIN-SUFFIX,gmodules.com
+  - DOMAIN-SUFFIX,godoc.org
+  - DOMAIN-SUFFIX,golang.org
+  - DOMAIN-SUFFIX,gstatic.com
+  - DOMAIN-SUFFIX,gv.com
+  - DOMAIN-SUFFIX,gwtproject.org
+  - DOMAIN-SUFFIX,itasoftware.com
+  - DOMAIN-SUFFIX,madewithcode.com
+  - DOMAIN-SUFFIX,material.io
+  - DOMAIN-SUFFIX,page.link
+  - DOMAIN-SUFFIX,polymer-project.org
+  - DOMAIN-SUFFIX,admin.recaptcha.net
+  - DOMAIN-SUFFIX,recaptcha.net
+  - DOMAIN-SUFFIX,shattered.io
+  - DOMAIN-SUFFIX,synergyse.com
+  - DOMAIN-SUFFIX,telephony.goog
+  - DOMAIN-SUFFIX,tensorflow.org
+  - DOMAIN-SUFFIX,tfhub.dev
+  - DOMAIN-SUFFIX,tiltbrush.com
+  - DOMAIN-SUFFIX,waveprotocol.org
+  - DOMAIN-SUFFIX,waymo.com
+  - DOMAIN-SUFFIX,webmproject.org
+  - DOMAIN-SUFFIX,webrtc.org
+  - DOMAIN-SUFFIX,whatbrowser.org
+  - DOMAIN-SUFFIX,widevine.com
+  - DOMAIN-SUFFIX,x.company
+  - DOMAIN-SUFFIX,youtu.be
+  - DOMAIN-SUFFIX,yt.be
+  - DOMAIN-SUFFIX,ytimg.com
+  # > Telegram
+  - DOMAIN-SUFFIX,t.me
+  - DOMAIN-SUFFIX,tdesktop.com
+  - DOMAIN-SUFFIX,telegram.me
+  - DOMAIN-SUFFIX,telesco.pe
+  # > Facebook
+  - DOMAIN-SUFFIX,facebook.br
+  - DOMAIN-SUFFIX,facebook.design
+  - DOMAIN-SUFFIX,facebook.hu
+  - DOMAIN-SUFFIX,facebook.in
+  - DOMAIN-SUFFIX,facebook.nl
+  - DOMAIN-SUFFIX,facebook.se
+  - DOMAIN-SUFFIX,facebookmail.com
+  # > Others
+  - DOMAIN-SUFFIX,noxinfluencer.com
+  - DOMAIN-SUFFIX,smartmailcloud.com
+  - DOMAIN-SUFFIX,weebly.com
+  - DOMAIN-SUFFIX,twitter.jp
+
+  # (Region-Restricted Access Denied)
+  # ---(Apple)---
+  # > Apple URL Shortener
+  - DOMAIN-SUFFIX,appsto.re
+  # > iBooks Store download
+  - DOMAIN,books.itunes.apple.com
+  # > App Store Preview
+  - DOMAIN,apps.apple.com
+  - DOMAIN,itunes.apple.com
+  # > Spotlight
+  - DOMAIN,api-glb-sea.smoot.apple.com
+  # > Look Up
+  - DOMAIN,lookup-api.apple.com
+  - DOMAIN-SUFFIX,smoot.apple.com
+  # > Apple Music Web
+  - DOMAIN,beta.music.apple.com
+  # ------
+  # > Others
+  - DOMAIN-SUFFIX,bing.com
+  - DOMAIN-SUFFIX,cccat.io
+  - DOMAIN-SUFFIX,ifixit.com
+  - DOMAIN-SUFFIX,mangakakalot.com
+  - DOMAIN-SUFFIX,shopeemobile.com
+
+  # (Network Jitter)
+  # > Fix download or update is stuck in App Store,and when change the Apple ID region,the payment information can be selected by none.
+  - DOMAIN-KEYWORD,buy.itunes.apple.com
+  - DOMAIN-SUFFIX,cloudcone.com.cn
+  - DOMAIN-SUFFIX,inkbunny.net
+  - DOMAIN-SUFFIX,metapix.net
+  - DOMAIN-SUFFIX,s3.amazonaws.com
+  - DOMAIN-SUFFIX,zaobao.com.sg
